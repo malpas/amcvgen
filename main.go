@@ -49,14 +49,13 @@ func main() {
 	pdf.AddPage()
 
 	fmt.Printf("Writing resume to %s\n", outName)
-	title := fmt.Sprintf("%s - Cirriculum Vitae", cv.Basics.Name)
-	writeTitle(pdf, title)
-	pdf.SetTitle(title, false)
 	if err := writeHeader(pdf, cv); err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	imageY := writeSummary(pdf, *cv)
+	pdf.SetTitle(fmt.Sprintf("%s - Cirriculum Vitae", cv.Basics.Name), false)
+
+	writeSummary(pdf, *cv)
 	writeSkillsAndInterests(pdf, *cv)
 	writeWork(pdf, *cv)
 	writeEducation(pdf, *cv)
@@ -64,8 +63,6 @@ func main() {
 		fmt.Printf("Adding credit (-c on)\n")
 		writeCredit(pdf, *cv)
 	}
-
-	drawImage(pdf, *cv, imageY)
 
 	err := pdf.OutputFileAndClose(outName)
 	if err != nil {

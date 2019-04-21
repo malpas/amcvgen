@@ -9,59 +9,70 @@ import (
 
 // writeHeader adds the header to the PDF
 func writeHeader(pdf *gofpdf.Fpdf, cv *CV) error {
-	pdf.SetFont("Arial", "", 11)
-	_, lineH := pdf.GetFontSize()
+	pdf.SetFont("Arial", "", 20)
+	marginL, marginT, marginR, _ := pdf.GetMargins()
+	pageW, _ := pdf.GetPageSize()
+	width := pageW - marginL - marginR
+	imageWidth, imageHeight := getImageSize(pdf, cv.Basics.Picture)
 
-	writeRight := func(text string, link string) {
-		pdf.SetFont("Arial", "", 11)
-		if link != "" {
-			pdf.SetFont("Arial", "U", 11)
+	startY := pdf.GetY()
+	var opt gofpdf.ImageOptions
+	pdf.ImageOptions(cv.Basics.Picture, 10, startY, 0, 0, false, opt, 0, "")
+
+	pdf.SetFillColor(255, 255, 255)
+	pdf.SetXY(5+imageWidth, startY)
+	pdf.SetFont("Arial", "", 20)
+	_, lineH := pdf.GetFontSize()
+	pdf.MultiCell(width, lineH, cv.Basics.Name, "", "", true)
+	pdf.SetX(5 + imageWidth)
+	pdf.SetFont("Arial", "", 13)
+	pdf.MultiCell(width, lineH, cv.Basics.Label, "", "", false)
+	pdf.SetXY(width/2, startY)
+	pdf.SetFont("Arial", "", 11)
+
+	writeRightOrSkip := func(text, field string) {
+		if text == "" {
+			fmt.Printf("Warning: Missing %s\n", field)
+			return
 		}
-		pdf.CellFormat(getContentWidth(pdf), lineH*1.1, text, "", 1, "R", false, 0, link)
-		pdf.SetFont("Arial", "", 11)
-	}
-	writeRightOrSkip := func(text string, link string, fieldName string) {
-		if text != "" {
-			writeRight(text, link)
-		} else {
-			fmt.Printf("Skipped %s in header\n", fieldName)
-		}
+		pdf.SetX(3*pageW/4 - marginR)
+		pdf.MultiCell(pageW/4, lineH*0.8, text, "", "R", true)
 	}
 
 	location := cv.Basics.Location
 	if location.Address != "" {
+
 		if location.PostalCode == "" {
 			fmt.Printf("Warning: Missing postal code\n")
 		}
 		if location.City == "" {
 			return errors.New("Missing city")
 		}
-		writeRight(cv.Basics.Location.Address, "")
-		writeRight(fmt.Sprintf("%s %s", cv.Basics.Location.City, cv.Basics.Location.PostalCode), "")
+		writeRightOrSkip(cv.Basics.Location.Address, "address")
+		cityPostCode := fmt.Sprintf("%s %s", cv.Basics.Location.City, cv.Basics.Location.PostalCode)
+		writeRightOrSkip(cityPostCode, "city and postal code")
 	} else {
 		fmt.Printf("Skipped location in header\n")
 	}
-	pdf.SetTextColor(10, 50, 200)
-	writeRightOrSkip(cv.Basics.Email, "mailto:"+cv.Basics.Email, "email")
+	writeRightOrSkip(cv.Basics.Email, "email")
+	writeRightOrSkip(cv.Basics.Phone, "phone")
+	pdf.SetFillColor(255, 255, 255)
 	pdf.SetTextColor(0, 0, 0)
-	writeRightOrSkip(cv.Basics.Phone, "", "phone")
-
+	pdf.SetY(imageHeight + marginT*0.3)
 	return nil
 }
 
 // writeSummary adds the summary section to the PDF
-func writeSummary(pdf *gofpdf.Fpdf, cv CV) float64 {
+func writeSummary(pdf *gofpdf.Fpdf, cv CV) {
 	if cv.Basics.Summary == "" {
 		fmt.Print("Skipped summary\n")
-		return -100
+		return
 	}
 	writeSectionName(pdf, "Objective")
-	imageY := pdf.GetY()
 	pdf.SetFont("Arial", "", 11)
 	_, lineH := pdf.GetFontSize()
 	pdf.Write(lineH, cv.Basics.Summary+"\n")
 	pdf.Write(lineH, "\n")
-	return imageY
 }
 
 // writeSkillsAndInterests adds the skills and interest section to the PDF

@@ -42,34 +42,18 @@ func writeLabelWithText(pdf *gofpdf.Fpdf, label string, labelFontStyle string,
 	pdf.CellFormat(getContentWidth(pdf)*(1-ratio), lineH*1.5, content, "", 1, "L", false, 0, "")
 }
 
-// writeTitle writes a large title to the PDF
-func writeTitle(pdf *gofpdf.Fpdf, title string) {
-	pdf.SetFont("Arial", "", 20)
-	_, lineH := pdf.GetFontSize()
-	marginL, _, marginR, _ := pdf.GetMargins()
-	pageW, _ := pdf.GetPageSize()
-	width := pageW - marginL - marginR
-	pdf.CellFormat(width, lineH*2, title, "", 1, "L", false, 0, "")
-}
-
-// drawImage adds the resume image to the PDF
-func drawImage(pdf *gofpdf.Fpdf, cv CV, y float64) {
-	if cv.Basics.Picture == "" {
-		fmt.Print("Skipped photo\n")
-		return
-	}
-	var opt gofpdf.ImageOptions
-	imageFile, err := os.Open(cv.Basics.Picture)
+func getImageSize(pdf *gofpdf.Fpdf, imageName string) (float64, float64) {
+	imageFile, err := os.Open(imageName)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not get %s\n", cv.Basics.Picture)
+		fmt.Fprintf(os.Stderr, "Could not get %s\n", imageName)
 		os.Exit(1)
 	}
 	reader := bufio.NewReader(imageFile)
 	image, _, _ := image.DecodeConfig(reader)
 
-	width, _ := pdf.GetPageSize()
-	imageX := width - pdf.PointToUnitConvert(float64(image.Width))
-	pdf.ImageOptions(cv.Basics.Picture, imageX, y, 0, 0, false, opt, 0, "")
+	width := pdf.PointToUnitConvert(float64(image.Width))
+	height := pdf.PointToUnitConvert(float64(image.Height))
+	return width, height
 }
 
 // getDateString returns the formatted current time
