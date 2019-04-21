@@ -47,6 +47,7 @@ func main() {
 	pdf.HTMLBasicNew()
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
+	pdf.SetDrawColor(150, 150, 150)
 
 	fmt.Printf("Writing resume to %s\n", outName)
 	if err := writeHeader(pdf, cv); err != nil {
