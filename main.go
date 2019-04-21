@@ -3,26 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/jung-kurt/gofpdf"
 )
-
-// loadCV extracts resume data from the file at a given location
-func loadCV(fileName string) *CV {
-	fData, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not load %s. See -h\n", fileName)
-		os.Exit(1)
-	}
-	cv, err := NewCV(string(fData))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not parse file: %s\n", err.Error())
-		os.Exit(1)
-	}
-	return cv
-}
 
 // usage prints program usage to stderr
 func usage() {
@@ -40,7 +24,7 @@ func main() {
 		return
 	}
 
-	cv := loadCV(fileName)
+	cv := NewCVFromFile(fileName)
 	outName := "cv.pdf"
 
 	pdf := gofpdf.New("P", "mm", "A4", "")

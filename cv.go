@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+
 	"gopkg.in/yaml.v2"
 )
 
-// NewCV creates a new CV from text
-func NewCV(text string) (*CV, error) {
+// NewCVFromText creates a new CV from text
+func NewCVFromText(text string) (*CV, error) {
 	cv := CV{}
 	err := yaml.Unmarshal([]byte(text), &cv)
 
@@ -14,6 +18,21 @@ func NewCV(text string) (*CV, error) {
 	}
 
 	return &cv, err
+}
+
+// NewCVFromFile extracts resume data from a given file location
+func NewCVFromFile(fileName string) *CV {
+	fData, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not load %s. See -h\n", fileName)
+		os.Exit(1)
+	}
+	cv, err := NewCVFromText(string(fData))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not parse file: %s\n", err.Error())
+		os.Exit(1)
+	}
+	return cv
 }
 
 // CV is the main CV data structure
