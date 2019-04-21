@@ -13,18 +13,25 @@ func writeHeader(pdf *gofpdf.Fpdf, cv *CV) error {
 	marginL, marginT, marginR, _ := pdf.GetMargins()
 	pageW, _ := pdf.GetPageSize()
 	width := pageW - marginL - marginR
-	imageWidth, imageHeight := getImageSize(pdf, cv.Basics.Picture)
 
+	startX := marginL
 	startY := pdf.GetY()
-	var opt gofpdf.ImageOptions
-	pdf.ImageOptions(cv.Basics.Picture, 10, startY, 0, 0, false, opt, 0, "")
+
+	if cv.Basics.Picture != "" {
+		var opt gofpdf.ImageOptions
+		imageWidth, _ := getImageSize(pdf, cv.Basics.Picture)
+		pdf.ImageOptions(cv.Basics.Picture, 10, startY, 0, 0, false, opt, 0, "")
+		startX = 5 + imageWidth
+	} else {
+		fmt.Println("Skipping picture in header")
+	}
 
 	pdf.SetFillColor(255, 255, 255)
-	pdf.SetXY(5+imageWidth, startY)
+	pdf.SetXY(startX, startY)
 	pdf.SetFont("Arial", "", 20)
 	_, lineH := pdf.GetFontSize()
 	pdf.MultiCell(width, lineH, cv.Basics.Name, "", "", true)
-	pdf.SetX(5 + imageWidth)
+	pdf.SetX(startX)
 	pdf.SetFont("Arial", "", 13)
 	pdf.MultiCell(width, lineH, cv.Basics.Label, "", "", false)
 	pdf.SetXY(width/2, startY)
@@ -58,7 +65,11 @@ func writeHeader(pdf *gofpdf.Fpdf, cv *CV) error {
 	writeRightOrSkip(cv.Basics.Phone, "phone")
 	pdf.SetFillColor(255, 255, 255)
 	pdf.SetTextColor(0, 0, 0)
-	pdf.SetY(imageHeight + marginT*0.3)
+	if cv.Basics.Picture != "" {
+		_, imageHeight := getImageSize(pdf, cv.Basics.Picture)
+		pdf.SetY(imageHeight + marginT*0.3)
+	}
+
 	return nil
 }
 
