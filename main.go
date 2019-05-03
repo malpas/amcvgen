@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"os"
 
+	pdfcpuapi "github.com/hhrutter/pdfcpu/pkg/api"
+	"github.com/hhrutter/pdfcpu/pkg/pdfcpu"
 	"github.com/jung-kurt/gofpdf"
 )
 
 // usage prints program usage to stderr
 func usage() {
-	fmt.Fprintf(os.Stderr, "Usage: %s [-c] file\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "Usage: %s [-c] [-p file] file\n", os.Args[0])
 	flag.PrintDefaults()
 }
 
 func main() {
 	isCredited := flag.Bool("c", false, "add credit section")
+	prependFileName := flag.String("p", "", "prepend a .pdf (e.g. a cover letter)")
 	help := flag.Bool("h", false, "help")
 	flag.Parse()
 	fileName := flag.Arg(0)
@@ -53,5 +56,19 @@ func main() {
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
 	}
+
+	if *prependFileName != "" {
+		if err := mergePdf(*prependFileName, outName); err != nil {
+			fmt.Printf("Could not merge %s into %s (check %s exists)\n", *prependFileName, outName, *prependFileName)
+			return
+		}
+	}
 	fmt.Printf("Success!")
+}
+
+// prependPdf prepends a pdf to a second, overwriting the second
+func mergePdf(firstFileName, secondFileName string) error {
+	var command = pdfcpuapi.MergeCommand([]string{firstFileName, secondFileName}, secondFileName, pdfcpu.NewDefaultConfiguration())
+	var _, err = pdfcpuapi.Merge(command)
+	return err
 }
