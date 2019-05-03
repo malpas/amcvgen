@@ -11,3 +11,5 @@ After the build, run `./amcvgen [your resume file]`. This file can be either YAM
 ## Dependencies
 - [https://github.com/jung-kurt/gofpdf](gofpdf)
 - [https://github.com/go-yaml/yaml/](goyaml)
+- [https://godoc.org/github.com/hhrutter/pdfcpu/pkg/pdfcpu](pdfcpu)
+- [https://godoc.org/github.com/hhrutter/pdfcpu/pkg/api](pdfcpu api)
