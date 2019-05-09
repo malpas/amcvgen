@@ -65,18 +65,18 @@ type CVBasics struct {
 
 // CVLocation provides the applicant address
 type CVLocation struct {
-	Address     string
-	PostalCode  string
-	City        string
-	CountryCode string
-	Region      string
+	Address     string `yaml:"address"`
+	PostalCode  string `yaml:"postalCode"`
+	City        string `yaml:"city"`
+	CountryCode string `yaml:"countryCode"`
+	Region      string `yaml:"region"`
 }
 
 // CVProfile describes a social media account
 type CVProfile struct {
-	Network  string
-	Username string
-	URL      string
+	Network  string `yaml:"network"`
+	Username string `yaml:"username"`
+	URL      string `yaml:"url"`
 }
 
 // CVWork provides information about a job
@@ -91,12 +91,12 @@ type CVWork struct {
 
 // CVVolunteer provides information about a volunteer work
 type CVVolunteer struct {
-	Organization string
-	Position     string
-	StartDate    string
-	EndDate      string
-	Summary      string
-	Highlights   []string
+	Organization string   `yaml:"organization"`
+	Position     string   `yaml:"position"`
+	StartDate    string   `yaml:"startDate"`
+	EndDate      string   `yaml:"endDate"`
+	Summary      string   `yaml:"summary"`
+	Highlights   []string `yaml:"highlights"`
 }
 
 // CVEducation provides information on formal education
@@ -112,42 +112,42 @@ type CVEducation struct {
 
 // CVAward describes an award
 type CVAward struct {
-	Title   string
-	Date    string
-	Awarder string
-	Summary string
+	Title   string `yaml:"title"`
+	Date    string `yaml:"date"`
+	Awarder string `yaml:"awarder"`
+	Summary string `yaml:"summary"`
 }
 
 // CVSkill describes a skill, with keywords and mastery
 type CVSkill struct {
-	Name     string
-	Level    string
-	Keywords []string
+	Name     string   `yaml:"name"`
+	Level    string   `yaml:"level"`
+	Keywords []string `yaml:"keywords"`
 }
 
 // CVInterest describes an interest with keywords
 type CVInterest struct {
-	Name     string
-	Keywords []string
+	Name     string   `yaml:"name"`
+	Keywords []string `yaml:"keywords"`
 }
 
 // CVLanguage describes a language proficiency
 type CVLanguage struct {
-	Language string
-	Fluency  string
+	Language string `yaml:"language"`
+	Fluency  string `yaml:"fluency"`
 }
 
 // CVReferences describes a reference
 type CVReference struct {
-	Name      string
-	Reference string
+	Name      string `yaml:"name"`
+	Reference string `yaml:"reference"`
 }
 
 // CVPublication describes a publication
 type CVPublication struct {
-	Name        string
-	Publisher   string
-	ReleaseDate string
-	Website     string
-	Summary     string
+	Name        string `yaml:"name"`
+	Publisher   string `yaml:"publisher"`
+	ReleaseDate string `yaml:"releaseDate"`
+	Website     string `yaml:"website"`
+	Summary     string `yaml:"summary"`
 }
