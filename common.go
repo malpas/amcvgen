@@ -37,9 +37,18 @@ func writeLabelWithText(pdf *gofpdf.Fpdf, label string, labelFontStyle string,
 
 	pdf.SetFont("Arial", labelFontStyle, 11)
 	_, lineH := pdf.GetFontSize()
+	mL, _, _, _ := pdf.GetMargins()
 	pdf.CellFormat(getContentWidth(pdf)*ratio, lineH*1.5, label, "", 0, "L", false, 0, "")
 	pdf.SetFont("Arial", contentFontStyle, 11)
-	pdf.CellFormat(getContentWidth(pdf)*(1-ratio), lineH*1.5, content, "", 1, "L", false, 0, "")
+	startX := pdf.GetX()
+	html := pdf.HTMLBasicNew()
+	for _, line := range strings.Split(content, "\n") {
+		html.Write(lineH*1.25, line)
+		pdf.SetY(pdf.GetY() + lineH*1.25)
+		pdf.SetX(startX)
+	}
+	pdf.SetX(mL)
+
 }
 
 func getImageSize(pdf *gofpdf.Fpdf, imageName string) (float64, float64) {

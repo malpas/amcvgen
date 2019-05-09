@@ -96,7 +96,8 @@ func writeSkillsAndInterests(pdf *gofpdf.Fpdf, cv CV) {
 	pdf.SetFont("Arial", "B", 11)
 	_, lineH := pdf.GetFontSize()
 	for _, skill := range cv.Skills {
-		writeLabelWithText(pdf, skill.Name, "", skill.Level, "I", 0.5)
+		writeLabelWithText(pdf, skill.Name, "", skill.Level, "", 0.5)
+		pdf.SetY(pdf.GetY() + lineH*0.4) // add a bit of separation between skills
 	}
 	pdf.Write(lineH, "\n")
 	if len(cv.Interests) == 0 {
@@ -112,7 +113,7 @@ func writeSkillsAndInterests(pdf *gofpdf.Fpdf, cv CV) {
 	}
 	interestText += "."
 	pdf.SetFont("Arial", "", 11)
-	pdf.CellFormat(getContentWidth(pdf), lineH*1.1, interestText, "", 1, "L", false, 0, "")
+	writeLabelWithText(pdf, "", "", interestText, "", 0)
 	pdf.Write(lineH, "\n")
 }
 
@@ -138,7 +139,7 @@ func writeEducation(pdf *gofpdf.Fpdf, cv CV) {
 			courses = true
 		}
 	}
-	pdf.Write(lineH, "\n")
+	pdf.Write(lineH*1.25, "\n")
 
 	if !courses {
 		fmt.Print("Skipped courses section (none given)\n")
@@ -149,8 +150,8 @@ func writeEducation(pdf *gofpdf.Fpdf, cv CV) {
 		pdf.SetFont("Arial", "", 11)
 		for _, course := range education.Courses {
 			html := pdf.HTMLBasicNew()
-			html.Write(lineH*1.1, course)
-			pdf.Write(lineH*1.1, "\n")
+			html.Write(lineH*1.25, course)
+			pdf.Write(lineH*1.25, "\n")
 		}
 	}
 	pdf.Write(lineH, "\n")
