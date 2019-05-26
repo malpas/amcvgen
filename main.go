@@ -18,6 +18,7 @@ func usage() {
 
 func main() {
 	isCredited := flag.Bool("c", false, "add credit section")
+	isSansSerif := flag.Bool("sans", false, "use a sans-serif font")
 	prependFileName := flag.String("p", "", "prepend a .pdf (e.g. a cover letter)")
 	help := flag.Bool("h", false, "help")
 	flag.Parse()
@@ -32,7 +33,14 @@ func main() {
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.HTMLBasicNew()
-	pdf.SetFont("Arial", "", 13)
+	pdf.AddUTF8Font("Libertine", "", "fonts/LinLibertine_Rah.ttf")
+	pdf.AddUTF8Font("Libertine", "B", "fonts/LinLibertine_RBah.ttf")
+	pdf.AddUTF8Font("Libertine", "I", "fonts/LinLibertine_RIah.ttf")
+	pdf.SetFont("Libertine", "", 13)
+	if *isSansSerif {
+		fmt.Printf("Using a sans-serif font")
+		pdf.SetFont("Helvetica", "", 13)
+	}
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
 	pdf.SetDrawColor(150, 150, 150)
