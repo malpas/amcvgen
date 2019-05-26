@@ -9,7 +9,8 @@ import (
 
 // writeHeader adds the header to the PDF
 func writeHeader(pdf *gofpdf.Fpdf, cv *CV) error {
-	pdf.SetFont("Arial", "", 20)
+	pdf.SetFontSize(20)
+	pdf.SetFontStyle("")
 	marginL, marginT, marginR, _ := pdf.GetMargins()
 	pageW, _ := pdf.GetPageSize()
 	width := pageW - marginL - marginR
@@ -28,14 +29,14 @@ func writeHeader(pdf *gofpdf.Fpdf, cv *CV) error {
 
 	pdf.SetFillColor(255, 255, 255)
 	pdf.SetXY(startX, startY)
-	pdf.SetFont("Arial", "", 20)
+	pdf.SetFontSize(20)
 	_, lineH := pdf.GetFontSize()
 	pdf.MultiCell(width, lineH, cv.Basics.Name, "", "", true)
 	pdf.SetX(startX)
-	pdf.SetFont("Arial", "", 13)
+	pdf.SetFontSize(13)
 	pdf.MultiCell(width, lineH, cv.Basics.Label, "", "", false)
 	pdf.SetXY(width/2, startY)
-	pdf.SetFont("Arial", "", 11)
+	pdf.SetFontSize(11)
 
 	writeRightOrSkip := func(text, field string) {
 		if text == "" {
@@ -80,7 +81,7 @@ func writeSummary(pdf *gofpdf.Fpdf, cv CV) {
 		return
 	}
 	writeSectionName(pdf, "Objective")
-	pdf.SetFont("Arial", "", 11)
+	pdf.SetFontSize(11)
 	_, lineH := pdf.GetFontSize()
 	pdf.Write(lineH, cv.Basics.Summary+"\n")
 	pdf.Write(lineH, "\n")
@@ -93,13 +94,13 @@ func writeSkillsAndInterests(pdf *gofpdf.Fpdf, cv CV) {
 		return
 	}
 	writeSectionName(pdf, "Skills & Interests")
-	pdf.SetFont("Arial", "B", 11)
+	pdf.SetFontSize(11)
+	pdf.SetFontStyle("B")
 	_, lineH := pdf.GetFontSize()
 	for _, skill := range cv.Skills {
 		writeLabelWithText(pdf, skill.Name, "", skill.Level, "", 0.5)
 		pdf.SetY(pdf.GetY() + lineH*0.4) // add a bit of separation between skills
 	}
-	pdf.Write(lineH, "\n")
 	if len(cv.Interests) == 0 {
 		return
 	}
@@ -112,7 +113,7 @@ func writeSkillsAndInterests(pdf *gofpdf.Fpdf, cv CV) {
 		interestText += joinText + interest.Name
 	}
 	interestText += "."
-	pdf.SetFont("Arial", "", 11)
+	pdf.SetFontStyle("")
 	writeLabelWithText(pdf, "", "", interestText, "", 0)
 	pdf.Write(lineH, "\n")
 }
@@ -127,7 +128,7 @@ func writeEducation(pdf *gofpdf.Fpdf, cv CV) {
 	writeSectionName(pdf, "Education")
 	courses := false
 	for _, education := range cv.Education {
-		pdf.SetFont("Arial", "", 11)
+		pdf.SetFontSize(11)
 		educationText := fmt.Sprintf("%s (%s of %s)", education.Institution, education.StudyType, education.Area)
 		if education.StudyType == "" {
 			educationText = education.Institution
@@ -147,7 +148,7 @@ func writeEducation(pdf *gofpdf.Fpdf, cv CV) {
 	}
 	writeSectionName(pdf, "Courses")
 	for _, education := range cv.Education {
-		pdf.SetFont("Arial", "", 11)
+		pdf.SetFontSize(11)
 		for _, course := range education.Courses {
 			html := pdf.HTMLBasicNew()
 			html.Write(lineH*1.25, course)
@@ -186,5 +187,5 @@ func writeCredit(pdf *gofpdf.Fpdf, cv CV) {
 	_, lineH := pdf.GetFontSize()
 	pdf.CellFormat(getContentWidth(pdf), 2, "", "T", 1, "", false, 0, "")
 	html := pdf.HTMLBasicNew()
-	html.Write(lineH, "<i>Generated with Aaron Malpas' CV generator (<a href=\"https://github.com/malpas/amcvgen\">github.com/malpas/amcvgen</a>)</i>")
+	html.Write(lineH, "Generated with Aaron Malpas' CV generator (<a href=\"https://github.com/malpas/amcvgen\">github.com/malpas/amcvgen</a>)")
 }

@@ -32,6 +32,7 @@ func main() {
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.HTMLBasicNew()
+	pdf.SetFont("Arial", "", 13)
 	pdf.SetMargins(10, 10, 10)
 	pdf.AddPage()
 	pdf.SetDrawColor(150, 150, 150)

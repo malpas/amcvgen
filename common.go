@@ -24,7 +24,8 @@ func getContentWidth(pdf *gofpdf.Fpdf) float64 {
 
 // writeSectionName adds a heading to the PDF with a given section name
 func writeSectionName(pdf *gofpdf.Fpdf, sectionName string) {
-	pdf.SetFont("Arial", "", 15)
+	pdf.SetFontSize(15)
+	pdf.SetFontStyle("")
 	_, lineH := pdf.GetFontSize()
 	pdf.CellFormat(getContentWidth(pdf), lineH*2, sectionName, "B", 1, "L", false, 0, "")
 	pdf.Write(lineH/2, "\n")
@@ -35,11 +36,12 @@ func writeSectionName(pdf *gofpdf.Fpdf, sectionName string) {
 func writeLabelWithText(pdf *gofpdf.Fpdf, label string, labelFontStyle string,
 	content string, contentFontStyle string, ratio float64) {
 
-	pdf.SetFont("Arial", labelFontStyle, 11)
+	pdf.SetFontSize(11)
+	pdf.SetFontStyle(labelFontStyle)
 	_, lineH := pdf.GetFontSize()
 	mL, _, _, _ := pdf.GetMargins()
 	pdf.CellFormat(getContentWidth(pdf)*ratio, lineH*1.5, label, "", 0, "L", false, 0, "")
-	pdf.SetFont("Arial", contentFontStyle, 11)
+	pdf.SetFontStyle(contentFontStyle)
 	startX := pdf.GetX()
 	html := pdf.HTMLBasicNew()
 	for _, line := range strings.Split(content, "\n") {
