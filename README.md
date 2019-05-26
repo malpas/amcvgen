@@ -8,6 +8,12 @@ Run `go build` to build. Golang (1.10+) must be installed.
 
 After the build, run `./amcvgen [your resume file]`. This file can be either YAML or JSON.
 
+## Features
+- Turn JSON Resume files into .pdfs
+- Add portrait images
+- Quickly prepend cover letters (or other .pdfs) with a command line switch
+- Both serif and sans serif fonts can be used
+
 ## Dependencies
 - [gopdf](https://github.com/jung-kurt/gofpdf) by Kurt Yung
 - [goyaml](https://github.com/go-yaml/yaml/) by Gustavo Niemeyer
